@@ -24,7 +24,7 @@
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
-            "miDebuggerPath": "D:/LLVM/mingw64/bin/gdb.exe",
+            "miDebuggerPath": "gdb",
             "setupCommands": [
                 {
                     "description": "Enable pretty-printing for gdb",
@@ -38,6 +38,5 @@
                 }
             ]
         }
-
     ]
 }
