@@ -122,19 +122,40 @@ add_excutable(hello-world hello-world.c)
    # CMake中定义BUILD_SHARED_LIBS全局变量，并设置为OFF
    set(BUILD_SHARED_LIBS OFF)
    
-   # 引入一个变量_sources，包括Message.hpp和Message.cpp
+   # 引入变量_sources
    list(APPEND _sources Message.hpp Message.cpp)
    
-   
+   # 使用条件控制语句if(), else()和endif()
    if(USE_LIBRARY)
-       # add_library will create a static library
-       # since BUILD_SHARED_LIBS is OFF
+       # add_library第二个参数缺省的话，会寻找CMake中定义的BUILD_SHARED_LIBS变量值
+       # 在上面将BUILD_SHARED_LIBS设置为了OFF，此时将会创建一个静态库
        add_library(message ${_sources})
        add_executable(hello-world hello-world.cpp)
        target_link_libraries(hello-world message)
    else()
        add_executable(hello-world hello-world.cpp ${_sources})
    endif()
+   ```
+
+2. CMake中的逻辑变量
+
+   - `true`：如果将逻辑变量设置为以下任意一种：`1`、`ON`、`YES`、`true`、`Y`或非零数
+   - `false`：如果将逻辑变量设置为以下任意一种：`0`、`OFF`、`NO`、`false`、`N`、`IGNORE、NOTFOUND`、空字符串，或者以`-NOTFOUND`为后缀
+
+3. 
+
+   ```cmake
+   include(CMakeDependentOption)
+   # second option depends on the value of the first
+   cmake_dependent_option(
+       MAKE_STATIC_LIBRARY "Compile sources into a static library" OFF
+       "USE_LIBRARY" ON
+       )
+   # third option depends on the value of the first
+   cmake_dependent_option(
+       MAKE_SHARED_LIBRARY "Compile sources into a shared library" ON
+       "USE_LIBRARY" ON
+       )
    ```
    
    
