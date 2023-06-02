@@ -121,7 +121,21 @@ add_excutable(hello-world hello-world.c)
    
    # CMake中定义BUILD_SHARED_LIBS全局变量，并设置为OFF
    set(BUILD_SHARED_LIBS OFF)
+   
+   # 引入一个变量_sources，包括Message.hpp和Message.cpp
+   list(APPEND _sources Message.hpp Message.cpp)
+   
+   
+   if(USE_LIBRARY)
+       # add_library will create a static library
+       # since BUILD_SHARED_LIBS is OFF
+       add_library(message ${_sources})
+       add_executable(hello-world hello-world.cpp)
+       target_link_libraries(hello-world message)
+   else()
+       add_executable(hello-world hello-world.cpp ${_sources})
+   endif()
    ```
-
+   
    
 
