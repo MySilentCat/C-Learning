@@ -142,21 +142,86 @@ add_excutable(hello-world hello-world.c)
    - `true`：如果将逻辑变量设置为以下任意一种：`1`、`ON`、`YES`、`true`、`Y`或非零数
    - `false`：如果将逻辑变量设置为以下任意一种：`0`、`OFF`、`NO`、`false`、`N`、`IGNORE、NOTFOUND`、空字符串，或者以`-NOTFOUND`为后缀
 
-3. 
+
+### 1.5 通过使用option()向用户提供变量赋值的行为
+
+1. 简单示例
 
    ```cmake
-   include(CMakeDependentOption)
-   # second option depends on the value of the first
-   cmake_dependent_option(
-       MAKE_STATIC_LIBRARY "Compile sources into a static library" OFF
-       "USE_LIBRARY" ON
-       )
-   # third option depends on the value of the first
-   cmake_dependent_option(
-       MAKE_SHARED_LIBRARY "Compile sources into a shared library" ON
-       "USE_LIBRARY" ON
-       )
+   cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
+   project(recipe-04 LANGUAGES CXX)
+   
+   # 引入了一个新变量USE_LIBRARY，这是一个逻辑变量，值为OFF
+   # set(USE_LIBRARY OFF)
+   # 使用option向用户传达，可以手动修改该值，默认值设置为OFF
+   option(USE_LIBRARY "Compile sources into a library" OFF)
+   
+   # 打印了它的值
+   message(STATUS "Compile sources into a library? ${USE_LIBRARY}")
+   
+   # CMake中定义BUILD_SHARED_LIBS全局变量，并设置为OFF
+   set(BUILD_SHARED_LIBS OFF)
+   
+   # 引入变量_sources
+   list(APPEND _sources Message.hpp Message.cpp)
+   
+   # 使用条件控制语句if(), else()和endif()
+   if(USE_LIBRARY)
+       # add_library第二个参数缺省的话，会寻找CMake中定义的BUILD_SHARED_LIBS变量值
+       # 在上面将BUILD_SHARED_LIBS设置为了OFF，此时将会创建一个静态库
+       add_library(message ${_sources})
+       add_executable(hello-world hello-world.cpp)
+       target_link_libraries(hello-world message)
+   else()
+       add_executable(hello-world hello-world.cpp ${_sources})
+   endif()
    ```
+
+2. 使用`-D`开关用于为CMake设置任何类型的变量：逻辑变量、路径等等
+
+   ```shell
+   $ mkdir -p build
+   $ cd build
+   $ cmake -D USE_LIBRARY=ON .. # 编译时配置
+   -- ...
+   -- Compile sources into a library? ON
+   -- ...
+   $ cmake --build .
+   Scanning dependencies of target message
+   [ 25%] Building CXX object CMakeFiles/message.dir/Message.cpp.o
+   [ 50%] Linking CXX static library libmessage.a
+   [ 50%] Built target message
+   Scanning dependencies of target hello-world
+   [ 75%] Building CXX object CMakeFiles/hello-world.dir/hello-world.cpp.o
+   [100%] Linking CXX executable hello-world
+   [100%] Built target hello-world
+   ```
+
+3. option()函数
+
+   ```cmake
+   option(<option_variable> "help string" [initial value])
    
+   <option_variable>表示该选项的变量的名称。
+   "help string"记录选项的字符串，在CMake的终端或图形用户界面中可见。
+   [initial value]选项的默认值，可以是ON或OFF。
+   ```
+
    
+
+```cmake
+include(CMakeDependentOption)
+# second option depends on the value of the first
+cmake_dependent_option(
+    MAKE_STATIC_LIBRARY "Compile sources into a static library" OFF
+    "USE_LIBRARY" ON
+    )
+# third option depends on the value of the first
+cmake_dependent_option(
+    MAKE_SHARED_LIBRARY "Compile sources into a shared library" ON
+    "USE_LIBRARY" ON
+    )
+```
+
+
 
