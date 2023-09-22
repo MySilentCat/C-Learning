@@ -47,9 +47,9 @@ add_excutable(hello-world hello-world.c)
 
    ```cmake
    add_library(message
-   	STATIC
-   		Message.c
-   		Message.h
+    STATIC
+     Message.c
+     Message.h
    )
    ```
 
@@ -95,7 +95,7 @@ add_excutable(hello-world hello-world.c)
        )
    add_library(message-shared
        SHARED
-       	# 这是生成器表达式语法
+        # 这是生成器表达式语法
            $<TARGET_OBJECTS:message-objs> 
        )
    add_library(message-static
@@ -141,7 +141,6 @@ add_excutable(hello-world hello-world.c)
 
    - `true`：如果将逻辑变量设置为以下任意一种：`1`、`ON`、`YES`、`true`、`Y`或非零数
    - `false`：如果将逻辑变量设置为以下任意一种：`0`、`OFF`、`NO`、`false`、`N`、`IGNORE、NOTFOUND`、空字符串，或者以`-NOTFOUND`为后缀
-
 
 ### 1.5 通过使用option()向用户提供变量赋值的行为
 
@@ -207,8 +206,6 @@ add_excutable(hello-world hello-world.c)
    [initial value]选项的默认值，可以是ON或OFF。
    ```
 
-   
-
 ```cmake
 include(CMakeDependentOption)
 # second option depends on the value of the first
@@ -222,6 +219,3 @@ cmake_dependent_option(
     "USE_LIBRARY" ON
     )
 ```
-
-
-
